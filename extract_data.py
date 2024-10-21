@@ -31,6 +31,7 @@ def get_stock_financials(stock: str) -> pd.DataFrame:
     try:
         ticker = yf.Ticker(stock)
         df = ticker.income_stmt.T
+        df['stock'] = stock
         if df.empty:
             raise ValueError(f'{stock}: No data found, symbol may be delisted')
         return df
