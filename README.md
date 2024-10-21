@@ -59,6 +59,8 @@ When creating functions, please add type hinting and doc string like below
 ```python
 1. add a function called get_exchange_rate to extract_data.py so it can download fx rate for us
 def get_exchange_rate(from_currency, to_currency, interval):
+    fx_rate_ticker = f"{from_currency}{to_currency}=X"
+    fx_rates = yf.download(fx_rate_ticker, period=period, interval=interval)
 
 
 ```
