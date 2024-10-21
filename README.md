@@ -84,20 +84,44 @@ and output should look like below
 
 <img alt="stock financial" src="./docs/news.png" width="1000">
 
+4. Add a new python file called transform_data.py and it should round open, high, low, close columns to 2 decimal places
+and rename data column to trade_data
+```Python
+def normalize_stock_data(stock_history: pd.DataFrame) -> pd.DataFrame:
+
+```
+
+
 ### Task 3
-1. creat function as below
+1. creat function as below to transform data.py
 ```python
-def enrich_stock_history(stock_history:pd.DataFrame):
+def add_stock_returns(stock_history:pd.DataFrame):
     """
     This function adds two columns to stock_history data frame
         a. "daily_return": this is caluclated using the "close" price column, google "how to calcualte daily return pandas"
         b. "cummulative_return": this is caculated using the "daily_return" caculated from step above(see stackoverflow below)
         https://stackoverflow.com/questions/35365545/calculating-cumulative-returns-with-pandas-dataframe
     """
-    return stock_history
 
 ```
-2. create load_data.py file and create function inside like below that save dataframe to sqlite db
+2. The stock price we get is denominated in local currency and we want to convert it to USD, in order to achieve this, we need
+   2.1 add a new column called currency_code(use the function get_stock_currency_code created from task 2 ) to stock history data frame in our get_stock_history function
+   2.1 add new function called standardize_price_to_usd like below, this function should first get the fx rate from whatever local currency to usd and then apply it to existing close price column to get a usd_close price column
+
+
+   note: you can use "SHOP.TO" to test it's the canadian stock ticker for canadian company called SHOPIFY, it should return canadian stock price when we our get_stock_history function runs and we need to get CAD/USD fx rate and convert CAD price 
+   to USD price
+
+```python
+   def standardize_price_to_usd(stock_history):
+
+
+```
+
+<img alt="stock financial" src="./docs/usd_close.png" width="1000">
+
+
+3. create load_data.py file and create function inside like below that save dataframe to sqlite db
      
 ```python
  def save_df_to_db(
@@ -131,7 +155,7 @@ df.to_sql() #4. final step of saving dataframe to db, see pandas documents on ho
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html
 
 ```
-3. install sqlite studio from link below
+4. install sqlite studio from link below
 https://github.com/pawelsalawa/sqlitestudio/releases
 
 
