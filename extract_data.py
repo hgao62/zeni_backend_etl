@@ -57,8 +57,7 @@ def get_exchange_rate(from_currency: str, to_currency: str, period: str, interva
         fx_rates['Ticker'] = fx_rate_ticker
         fx_rates['From Currency'] = from_currency
         fx_rates['To Currency'] = to_currency
-        cols = fx_rates.columns.tolist()
-        return fx_rates[cols[:1] + cols[-3:] + cols[1: -3]]
+        return fx_rates[['Date', 'Ticker', 'From Currency', 'To Currency', 'Open', 'High', 'Low', 'Close', 'Adj Close']]
     except Exception as e:
         print(f'Error occurred: {e}')
         return pd.DataFrame()
