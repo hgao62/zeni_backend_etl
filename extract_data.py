@@ -90,10 +90,10 @@ def get_news(stock: str) -> pd.DataFrame:
     """
     try:
         stock_ticker = yf.Ticker(stock)
-        news = pd.DataFrame(stock_ticker.news).drop(columns = ['thumbnail', 'relatedTickers'])
-        news['providerPublishTime'] = pd.to_datetime(news['providerPublishTime'], unit='s') # timestamp to date
-        news['Ticker'] = stock
-        return news
+        stock_news = pd.DataFrame(stock_ticker.news).drop(columns = ['thumbnail', 'relatedTickers'])
+        stock_news['providerPublishTime'] = pd.to_datetime(stock_news['providerPublishTime'], unit='s') # timestamp to date
+        stock_news['Ticker'] = stock
+        return stock_news
     except Exception as e:
         print(f'Error occurred: {e}')
         return pd.DataFrame()
