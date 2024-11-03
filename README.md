@@ -185,7 +185,7 @@ https://stackoverflow.com/questions/66669728/trouble-installing-mysql-client-on-
 please add this run_pipeline function to main.py so that it takes a list of tickers to do following things:
  - 2.1 it downloading data from yaohoo finance api by calling get_stock_history,get_stock_financials, get_news
  - 2.2 enrich stock history data using add_stock_returns, standardize_price_to_usd, normalize_stock_data, calculate_moving_average
- - 2.3 saved enriched stock history, news data, financial data to "stock_history" , "news", "financial" tables  in mysql database respectively
+ - 2.3 save enriched stock history, news data, financial data to "stock_history" , "news", "financial" tables  in mysql database respectively
 
 ```python 
 def run_pipeline(
