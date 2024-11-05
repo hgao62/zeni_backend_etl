@@ -38,6 +38,29 @@ def get_stock_financials(stock):
        please follow this link to get example on how to use yahoo finance api
        https://github.com/ranaroussi/yfinance
     '''
+    output_columns = [
+        "date",
+        "Tax Effect Of Unusual Items",
+        "Tax Rate For Calcs",
+        "Normalized EBITDA",
+        "Net Income From Continuing Operation Net Minority Interest",
+        "Reconciled Depreciation",
+        "Reconciled Cost Of Revenue",
+        "EBITDA",
+        "EBIT",
+        "Net Interest Income",
+        "Interest Expense",
+        "Interest Income",
+        "Normalized Income",
+        "Net Income From Continuing And Discontinued Operation",
+        "Total Expenses",
+        "Total Operating Income As Reported",
+        "Diluted Average Shares",
+        "Basic Average Shares",
+        "Diluted EPS",
+        "Basic EPS",
+       
+    ]
 
 ```
 it should return a data frame like this below
