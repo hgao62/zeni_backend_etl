@@ -254,3 +254,11 @@ https://www.youtube.com/watch?v=HG6yIjZapSA&t=1598s
 
 apache airflow in half an hour(only need to watch first 4 videos)
 https://www.youtube.com/watch?v=s6PgXq-SO4I&list=PLc2EZr8W2QIAI0cS1nZGNxoLzppb7XbqM
+
+
+# Task 7 run etl pipeline from airflow inside docker
+```
+docker-compose up --build
+```
+
+# Task 8 deploy project to cloud
