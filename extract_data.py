@@ -1,10 +1,23 @@
 import logging
+from enum import Enum
 
 import pandas as pd
 import yfinance as yf
 
 logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+class stock_history(Enum):
+    STOCK_SPLITES = "Stock Splits"
+    DATE = "Date"
+    OPEN = "Open"
+    HIGH = "High"
+    LOW = "Low"
+    CLOSE = "Close"
+    VOLUME = "Volume"
+    DIVIDENDS = "Dividends"
+    STOCK = "stock"
 
 
 def get_stock_history(
@@ -24,14 +37,20 @@ def get_stock_history(
         ticker = yf.Ticker(stock)
         df = (
             ticker.history(period=period, interval=interval)
-            .drop(columns=["Stock Splits"])
+            .drop(columns=[stock_history.STOCK_SPLITES])
             .reset_index()
         )
-        df["stock"] = stock
+        df[stock_history.STOCK] = stock
         return df
     except Exception as e:
         logger.error(f"Error occurred get_stock_history: {e}", exc_info=True)
         return pd.DataFrame()
+
+
+class stock_financials(Enum):
+    INDEX = "index"
+    DATE = "date"
+    STOCK = "stock"
 
 
 def get_stock_financials(stock: str) -> pd.DataFrame:
@@ -68,18 +87,29 @@ def get_stock_financials(stock: str) -> pd.DataFrame:
     try:
         ticker = yf.Ticker(stock)
         df = ticker.income_stmt.T.reset_index()
-        df.rename(columns={"index": "date"}, inplace=True)
-        df["date"] = pd.to_datetime(df["date"])
+        df.rename(columns={stock_financials.INDEX: stock_financials.DATE}, inplace=True)
+        df[stock_financials.INDEX] = pd.to_datetime(df[stock_financials.INDEX])
         df = df[output_columns]
         output_columns_renamed = {col: col.replace(" ", "_") for col in output_columns}
         df.rename(columns=output_columns_renamed, inplace=True)
-        df["stock"] = stock
+        df[stock_financials.STOCK] = stock
         if df.empty:
             raise ValueError(f"{stock}: No data found, symbol may be delisted")
         return df
     except Exception as e:
         logger.error(f"Error occurred get_stock_financials: {e}", exc_info=True)
         return pd.DataFrame()
+
+
+class exchange_rate(Enum):
+    VOLUME = "Volume"
+    TICKER = "Ticker"
+    FROM_CURRENCY = "From Currency"
+    TO_CURRENCY = "To Currency"
+    OPEN = "Open"
+    HIGH = "High"
+    LOW = "Low"
+    CLOSE = "Close"
 
 
 def get_exchange_rate(
@@ -100,12 +130,12 @@ def get_exchange_rate(
         fx_rate_ticker = f"{from_currency}{to_currency}=X"
         fx_rates = (
             yf.download(fx_rate_ticker, period=period, interval=interval)
-            .drop(columns=["Volume"])
+            .drop(columns=[exchange_rate.VOLUME])
             .reset_index()
         )
-        fx_rates["Ticker"] = fx_rate_ticker
-        fx_rates["From Currency"] = from_currency
-        fx_rates["To Currency"] = to_currency
+        fx_rates[exchange_rate.TICKER] = fx_rate_ticker
+        fx_rates[exchange_rate.FROM_CURRENCY] = from_currency
+        fx_rates[exchange_rate.TO_CURRENCY] = to_currency
         return fx_rates[
             [
                 "Date",
@@ -124,6 +154,10 @@ def get_exchange_rate(
         return pd.DataFrame()
 
 
+class stock_currency(Enum):
+    FINANCIAL = "financialCurrency"
+
+
 def get_stock_currency_code(stock: str) -> str:
     """get the currency code for input stock
 
@@ -135,11 +169,17 @@ def get_stock_currency_code(stock: str) -> str:
     """
     try:
         stock_ticker = yf.Ticker(stock)
-        currency_code = stock_ticker.info["financialCurrency"]
+        currency_code = stock_ticker.info[stock_currency.FINANCIAL]
         return currency_code
     except Exception as e:
         logger.error(f"Error occurred get_stock_currency_code: {e}", exc_info=True)
         return None
+
+
+class news(Enum):
+    THUMBNAIL = "thumbnail"
+    RELATED_TICKERS = "relatedTickers"
+    PUBLISHTIME = "providerPublishTime"
 
 
 def get_news(stock: str) -> pd.DataFrame:
@@ -154,9 +194,9 @@ def get_news(stock: str) -> pd.DataFrame:
     try:
         stock_ticker = yf.Ticker(stock)
         stock_news = pd.DataFrame(stock_ticker.news)
-        stock_news = stock_news.drop(columns=["thumbnail", "relatedTickers"])
-        stock_news["providerPublishTime"] = pd.to_datetime(
-            stock_news["providerPublishTime"], unit="s"
+        stock_news = stock_news.drop(columns=[news.THUMBNAIL, news.RELATED_TICKERS])
+        stock_news[news.PUBLISHTIME] = pd.to_datetime(
+            stock_news[news.PUBLISHTIME], unit="s"
         )  # timestamp to date
         stock_news["Ticker"] = stock
         return stock_news

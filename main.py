@@ -59,6 +59,13 @@ def run_pipeline(tickers: List[str], period: str = "1d", interval: str = "1d",) 
         logger.info("Successfully saved %s financials.", ticker)
 
 
-logger.info(
-    "Finished running ETL job to save stock related market data into mysql database."
-)
+if __name__ == "__main__":
+    try:
+        run_pipeline()
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        raise
+
+    logger.info(
+        "Finished running ETL job to save stock related market data into mysql database."
+    )
