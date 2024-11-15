@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 import logging
@@ -18,16 +17,7 @@ logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.info("Loading main.py ...")
 
-load_dotenv("mysql_connection.env")
-USERNAME = os.getenv("USERNAME")
-PASSWORD = os.getenv("PASSWORD")
-HOST = os.getenv("HOST")
-PORT = os.getenv("PORT")
-DATABASE = "yf_db"
-# ENGINE = create_engine("sqlite:///yf_finance.db")
-ENGINE = create_engine(
-    f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
-)
+ENGINE = create_engine("mysql://airflow_user:airflow_pass@mysql:3306/airflow_db")
 
 
 def run_pipeline(tickers: List[str], period: str = "1d", interval: str = "1d",) -> None:
