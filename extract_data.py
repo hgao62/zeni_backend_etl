@@ -37,10 +37,10 @@ def get_stock_history(
         ticker = yf.Ticker(stock)
         df = (
             ticker.history(period=period, interval=interval)
-            .drop(columns=[stock_history.STOCK_SPLITES])
+            .drop(columns=[stock_history.STOCK_SPLITES.value])
             .reset_index()
         )
-        df[stock_history.STOCK] = stock
+        df[stock_history.STOCK.value] = stock
         return df
     except Exception as e:
         logger.error(f"Error occurred get_stock_history: {e}", exc_info=True)
@@ -87,12 +87,12 @@ def get_stock_financials(stock: str) -> pd.DataFrame:
     try:
         ticker = yf.Ticker(stock)
         df = ticker.income_stmt.T.reset_index()
-        df.rename(columns={stock_financials.INDEX: stock_financials.DATE}, inplace=True)
-        df[stock_financials.INDEX] = pd.to_datetime(df[stock_financials.INDEX])
+        df.rename(columns={stock_financials.INDEX.value: stock_financials.DATE.value}, inplace=True)
+        df[stock_financials.INDEX.value] = pd.to_datetime(df[stock_financials.INDEX.value])
         df = df[output_columns]
         output_columns_renamed = {col: col.replace(" ", "_") for col in output_columns}
         df.rename(columns=output_columns_renamed, inplace=True)
-        df[stock_financials.STOCK] = stock
+        df[stock_financials.STOCK.value] = stock
         if df.empty:
             raise ValueError(f"{stock}: No data found, symbol may be delisted")
         return df
@@ -130,12 +130,12 @@ def get_exchange_rate(
         fx_rate_ticker = f"{from_currency}{to_currency}=X"
         fx_rates = (
             yf.download(fx_rate_ticker, period=period, interval=interval)
-            .drop(columns=[exchange_rate.VOLUME])
+            .drop(columns=[exchange_rate.VOLUME.value])
             .reset_index()
         )
-        fx_rates[exchange_rate.TICKER] = fx_rate_ticker
-        fx_rates[exchange_rate.FROM_CURRENCY] = from_currency
-        fx_rates[exchange_rate.TO_CURRENCY] = to_currency
+        fx_rates[exchange_rate.TICKER.value] = fx_rate_ticker
+        fx_rates[exchange_rate.FROM_CURRENCY.value] = from_currency
+        fx_rates[exchange_rate.TO_CURRENCY.value] = to_currency
         return fx_rates[
             [
                 "Date",
@@ -169,7 +169,7 @@ def get_stock_currency_code(stock: str) -> str:
     """
     try:
         stock_ticker = yf.Ticker(stock)
-        currency_code = stock_ticker.info[stock_currency.FINANCIAL]
+        currency_code = stock_ticker.info[stock_currency.FINANCIAL.value]
         return currency_code
     except Exception as e:
         logger.error(f"Error occurred get_stock_currency_code: {e}", exc_info=True)
@@ -194,9 +194,9 @@ def get_news(stock: str) -> pd.DataFrame:
     try:
         stock_ticker = yf.Ticker(stock)
         stock_news = pd.DataFrame(stock_ticker.news)
-        stock_news = stock_news.drop(columns=[news.THUMBNAIL, news.RELATED_TICKERS])
-        stock_news[news.PUBLISHTIME] = pd.to_datetime(
-            stock_news[news.PUBLISHTIME], unit="s"
+        stock_news = stock_news.drop(columns=[news.THUMBNAIL.value, news.RELATED_TICKERS.value])
+        stock_news[news.PUBLISHTIME.value] = pd.to_datetime(
+            stock_news[news.PUBLISHTIME.value], unit="s"
         )  # timestamp to date
         stock_news["Ticker"] = stock
         return stock_news

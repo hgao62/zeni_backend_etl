@@ -11,7 +11,7 @@ ZERO = 0
 ONE = 1
 TWO = 2
 
-class stock_his(Enum):
+class StockHis(str, Enum):
     STOCK_SPLITES = "Stock Splits"
     DATE = "Date"
     OPEN = "Open"
@@ -37,18 +37,18 @@ def normalize_stock_data(stock_history: pd.DataFrame) -> pd.DataFrame:
     """
     try:
         stock_history[
-            [stock_his.OPEN, stock_his.HIGH, stock_his.LOW, stock_his.CLOSE]
+            [StockHis.OPEN, StockHis.HIGH, StockHis.LOW, StockHis.CLOSE]
         ] = stock_history[
-            [stock_his.OPEN, stock_his.HIGH, stock_his.LOW, stock_his.CLOSE]
+            [StockHis.OPEN, StockHis.HIGH, StockHis.LOW, StockHis.CLOSE]
         ].apply(
             lambda x: round(x + 10e-12, TWO)
         )
         stock_history.rename(
-            columns={stock_his.DATE: stock_his.TRADEDATE}, inplace=True
+            columns={StockHis.DATE: StockHis.TRADEDATE}, inplace=True
         )
         return stock_history
     except Exception as e:
-        logger.error(f"Error occurred normalize_stock_data: {e}", exc_info=True)
+        logger.error("Error occurred normalize_stock_data: %s", e, exc_info=True)
 
 
 def add_stock_returns(stock_history: pd.DataFrame) -> pd.DataFrame:
@@ -63,19 +63,19 @@ def add_stock_returns(stock_history: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: stock history with 2 return added
     """
     try:
-        stock_history.sort_values(by=stock_his.TRADEDATE, ascending=True, inplace=True)
-        stock_history[stock_his.DAILY_RETURN] = stock_history[
-            stock_his.CLOSE
+        stock_history.sort_values(by=StockHis.TRADEDATE, ascending=True, inplace=True)
+        stock_history[StockHis.DAILY_RETURN] = stock_history[
+            StockHis.CLOSE
         ].pct_change()
-        stock_history[stock_his.CUL_RETURN] = (
-            ONE + stock_history[stock_his.DAILY_RETURN]
+        stock_history[StockHis.CUL_RETURN] = (
+            ONE + stock_history[StockHis.DAILY_RETURN]
         ).cumprod() - ONE
         return stock_history
     except Exception as e:
-        logger.error(f"Error occurred add_stock_returns: {e}", exc_info=True)
+        logger.error("Error occurred add_stock_returns: %s", e, exc_info=True)
 
 
-class to_usd(Enum):
+class ToUsd(str, Enum):
     STOCK = "stock"
     USD_CLOSE = "usd_close"
     CLOSE = "Close"
@@ -94,16 +94,16 @@ def standardize_price_to_usd(stock_history: pd.DataFrame) -> pd.DataFrame:
         stock_ticker = stock_history["stock"].iloc[0]
         currency_code = get_stock_currency_code(stock_ticker)
         if currency_code == "USD":
-            stock_history[to_usd.USD_CLOSE] = stock_history[to_usd.CLOSE]
+            stock_history[ToUsd.USD_CLOSE] = stock_history[ToUsd.CLOSE]
         if not currency_code:
             raise ValueError(f"Could not retrieve currency code for {stock_ticker}")
         exchange_rate = get_exchange_rate(currency_code, "USD", "1d", "1d")[
             "Close"
         ].iloc[0]
-        stock_history[to_usd.USD_CLOSE] = stock_history[to_usd.CLOSE] * exchange_rate
+        stock_history[ToUsd.USD_CLOSE] = stock_history[ToUsd.CLOSE] * exchange_rate
         return stock_history
     except Exception as e:
-        logger.error(f"Error occurred standardize_price_to_usd: {e}", exc_info=True)
+        logger.error("Error occurred standardize_price_to_usd: %s", e, exc_info=True)
 
 
 def calculate_moving_average(
@@ -119,9 +119,9 @@ def calculate_moving_average(
         pd.DataFrame: stock history with moving average for 5 days
     """
     try:
-        stock_history[stock_his.CLOSE_AVG] = (
-            stock_history[stock_his.CLOSE].rolling(window=window).mean()
+        stock_history[StockHis.CLOSE_AVG] = (
+            stock_history[StockHis.CLOSE].rolling(window=window).mean()
         )
         return stock_history
     except Exception as e:
-        logger.error(f"Error occurred calculate_moving_average: {e}", exc_info=True)
+        logger.error("Error occurred calculate_moving_average: %s", e, exc_info=True)

@@ -1,7 +1,6 @@
 from typing import List
 
 import logging
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
 from extract_data import get_news, get_stock_financials, get_stock_history
@@ -28,6 +27,7 @@ def run_pipeline(tickers: List[str], period: str = "1d", interval: str = "1d",) 
         period (str, optional): query period (ex: '5d', '1mo', '1y'). Defaults to "1d".
         interval (str, optional): time interval (ex: '1d'). Defaults to "1d".
     """
+    logger.info("Running pipline with tickers %s, %s, %s", tickers, interval, period)
     for ticker in tickers:
         logger.info("Staring saving %s history...", ticker)
         stock_history = get_stock_history(ticker, period, interval)
@@ -51,11 +51,11 @@ def run_pipeline(tickers: List[str], period: str = "1d", interval: str = "1d",) 
 
 if __name__ == "__main__":
     try:
-        run_pipeline()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        raise
-
-    logger.info(
+        tickers_list = ["AAPL", "GOOGL", "MSFT"]
+        run_pipeline(tickers_list)
+        logger.info(
         "Finished running ETL job to save stock related market data into mysql database."
     )
+    except Exception as e:
+        logger.error("An error occurred: %s", e)
+        raise
