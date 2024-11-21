@@ -14,7 +14,7 @@ default_args = {
     "retries": 1,
     "retry_delay": timedelta(minutes=5),
     "params": {
-        "stock_list": ["AAPL"],
+        "stock_list": ["AAPL", "AMZN", "MSFT", "GOOGL", "META", "TSLA"],
         "period": "1d",
         "interval": "1d",
     },
