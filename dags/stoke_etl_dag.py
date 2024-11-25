@@ -14,7 +14,7 @@ default_args = {
     "retries": 1,
     "retry_delay": timedelta(minutes=5),
     "params": {
-        "stock_list": ["AAPL", "AMZN", "MSFT", "GOOGL", "META", "TSLA"],
+        "stock_list": ["AAPL", "AMZN", "MSFT", "GOOGL", "META", "TSLA", "NFLX", "NVDA"],
         "period": "1d",
         "interval": "1d",
     },
@@ -24,7 +24,7 @@ dag = DAG(
     "stock_data_pipline",
     default_args=default_args,
     description="Run stock data pipeline",
-    schedule_interval="0 2 * * *",
+    schedule_interval="0 17 * * *",
     start_date=datetime(2024, 11, 17),
     catchup=False,
     render_template_as_native_obj=True,
