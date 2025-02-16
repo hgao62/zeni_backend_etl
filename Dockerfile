@@ -32,4 +32,7 @@ RUN pip install -r requirements.txt
 
 # copy the content of the local src directory to the working directory
 COPY . .
+
+# Set the entry point to initialize the database and start the webserver
 RUN chmod +x entrypoint.sh
+
